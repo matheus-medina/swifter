@@ -32,6 +32,8 @@ extension Socket {
             throw SocketError.socketSettingReUseAddrFailed(details)
         }
         Socket.setNoSigPipe(socketFileDescriptor)
+        
+        Socket.setKeepAlive(socketFileDescriptor)
 
         var bindResult: Int32 = -1
         if forceIPv4 {
@@ -110,6 +112,7 @@ extension Socket {
             throw SocketError.acceptFailed(Errno.description())
         }
         Socket.setNoSigPipe(clientSocket)
+        Socket.setKeepAlive(clientSocket)
         return Socket(socketFileDescriptor: clientSocket)
     }
 }

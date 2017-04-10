@@ -156,6 +156,13 @@ open class Socket: Hashable, Equatable {
         #endif
     }
     
+    public class func setKeepAlive(_ socket: Int32) {
+        var on : Int32 = 1
+        var delay: Int32 = 180
+        setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, &on, socklen_t(MemoryLayout<Int32>.size))
+        setsockopt(socket, IPPROTO_TCP, TCP_KEEPALIVE, &delay, socklen_t(MemoryLayout<Int32>.size))
+    }
+    
     public class func close(_ socket: Int32) {
         #if os(Linux)
             let _ = Glibc.close(socket)

@@ -105,14 +105,31 @@ extension Socket {
     }
     
     public func acceptClientSocket() throws -> Socket {
+        
+        if let acceptedSocket = acceptClientSocketWithRetries(retries: 0){
+            return acceptedSocket
+        }
+        throw SocketError.acceptFailed(Errno.description())
+    }
+    
+    public func acceptClientSocketWithRetries(retries : Int)  -> Socket? {
         var addr = sockaddr()
         var len: socklen_t = 0
         let clientSocket = accept(self.socketFileDescriptor, &addr, &len)
         if clientSocket == -1 {
-            throw SocketError.acceptFailed(Errno.description())
+            
+            if  retries > 0 {
+                print("ON RETRY \(Errno.description())")
+                return acceptClientSocketWithRetries(retries: retries - 1)
+            }
+            
+            return nil
+            
+        } else {
+            Socket.setNoSigPipe(clientSocket)
+            Socket.setKeepAlive(clientSocket)
+            return Socket(socketFileDescriptor: clientSocket)
         }
-        Socket.setNoSigPipe(clientSocket)
-        Socket.setKeepAlive(clientSocket)
-        return Socket(socketFileDescriptor: clientSocket)
     }
+
 }

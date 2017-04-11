@@ -92,6 +92,11 @@ public class HttpServerIO {
                 }
             }
             self.stop()
+            do {
+                try self.start()
+            } catch {
+                print("Server start error: \(error)")
+            }
         }
         self.state = .running
     }

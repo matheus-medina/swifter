@@ -93,7 +93,7 @@ public class HttpServerIO {
             }
             self.stop()
             do {
-                try self.start()
+                try self.start(port)
             } catch {
                 print("Server start error: \(error)")
             }

@@ -69,7 +69,7 @@ public class HttpServerIO {
     }
 
     @available(macOS 10.10, *)
-    public func start(_ port: in_port_t = 8080, forceIPv4: Bool = false, priority: DispatchQoS.QoSClass = DispatchQoS.QoSClass.background) throws {
+    public func start(_ port: in_port_t = 8080, forceIPv4: Bool = false, priority: DispatchQoS.QoSClass = DispatchQoS.QoSClass.userInitiated) throws {
         guard !self.operating else { return }
         stop()
         self.state = .starting
@@ -92,10 +92,12 @@ public class HttpServerIO {
                 }
             }
             self.stop()
-            do {
-                try self.start(port)
-            } catch {
-                print("Server start error: \(error)")
+            if UIApplication.shared.applicationState == .active {
+                do {
+                    try self.start(port)
+                } catch {
+                    print("Server start error: \(error)")
+                }
             }
         }
         self.state = .running

@@ -79,7 +79,8 @@ public class HttpServerIO {
             guard let `self` = self else { return }
             guard self.operating else { return }
             while let socket = try? self.socket.acceptClientSocket() {
-                DispatchQueue.global(qos: priority).async { [weak self] in
+                let clientQueue =  DispatchQueue(label: "HTTP SERVER-CLIENT")
+                clientQueue.async { [weak self] in
                     guard let `self` = self else { return }
                     guard self.operating else { return }
                     self.queue.async {

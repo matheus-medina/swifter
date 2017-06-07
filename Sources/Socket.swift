@@ -157,10 +157,25 @@ open class Socket: Hashable, Equatable {
     }
     
     public class func setKeepAlive(_ socket: Int32) {
+               
         var on : Int32 = 1
-        var delay: Int32 = 180
         setsockopt(socket, SOL_SOCKET, SO_KEEPALIVE, &on, socklen_t(MemoryLayout<Int32>.size))
+       
+        /**
+        var timeoutCon : timeval = timeval.init()
+        timeoutCon.tv_sec = 180
+        
+        setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeoutCon, socklen_t(MemoryLayout<Int32>.size))
+
+        setsockopt(socket, SOL_SOCKET, SO_SNDTIMEO, &timeoutCon, socklen_t(MemoryLayout<Int32>.size))
+         */
+        
+        var delay: Int32 = 180
         setsockopt(socket, IPPROTO_TCP, TCP_KEEPALIVE, &delay, socklen_t(MemoryLayout<Int32>.size))
+       
+        var timeout: Int32 = 180
+        setsockopt(socket, IPPROTO_TCP, TCP_CONNECTIONTIMEOUT, &timeout, socklen_t(MemoryLayout<Int32>.size))
+ 
     }
     
     public class func close(_ socket: Int32) {

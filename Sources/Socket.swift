@@ -164,16 +164,14 @@ open class Socket: Hashable, Equatable {
         /**
         var timeoutCon : timeval = timeval.init()
         timeoutCon.tv_sec = 180
-        
         setsockopt(socket, SOL_SOCKET, SO_RCVTIMEO, &timeoutCon, socklen_t(MemoryLayout<Int32>.size))
-
         setsockopt(socket, SOL_SOCKET, SO_SNDTIMEO, &timeoutCon, socklen_t(MemoryLayout<Int32>.size))
          */
         
-        var delay: Int32 = 180
+        var delay: Int32 = 1800
         setsockopt(socket, IPPROTO_TCP, TCP_KEEPALIVE, &delay, socklen_t(MemoryLayout<Int32>.size))
        
-        var timeout: Int32 = 180
+        var timeout: Int32 = 1800
         setsockopt(socket, IPPROTO_TCP, TCP_CONNECTIONTIMEOUT, &timeout, socklen_t(MemoryLayout<Int32>.size))
  
     }

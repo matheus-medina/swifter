@@ -55,7 +55,8 @@ public class HttpServerIO {
     public var listenAddressIPv6: String?
 
     private let queue = DispatchQueue(label: "swifter.httpserverio.clientsockets")
-
+    private let socketQueue = DispatchQueue(label: "swifter.httpserverio.serversockets", qos: .userInitiated, attributes: .concurrent)
+    
     public func port() throws -> Int {
         return Int(try socket.port())
     }
@@ -76,12 +77,11 @@ public class HttpServerIO {
         let address = forceIPv4 ? listenAddressIPv4 : listenAddressIPv6
         self.socket = try Socket.tcpSocketForListen(port, forceIPv4, SOMAXCONN, address)
         self.state = .running
-        DispatchQueue.global(qos: priority).async { [weak self] in
+        self.socketQueue.async { [weak self] in
             guard let `self` = self else { return }
             guard self.operating else { return }
             while let socket = try? self.socket.acceptClientSocket() {
-                let clientQueue =  DispatchQueue(label: "HTTP SERVER-CLIENT")
-                clientQueue.async { [weak self] in
+                self.socketQueue.async { [weak self] in
                     guard let `self` = self else { return }
                     guard self.operating else { return }
                     self.queue.async {

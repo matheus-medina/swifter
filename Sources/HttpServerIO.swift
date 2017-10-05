@@ -94,13 +94,19 @@ public class HttpServerIO {
                 }
             }
             self.stop()
-            if UIApplication.shared.applicationState == .active {
-                do {
-                    try self.start(port)
-                } catch {
-                    print("Server start error: \(error)")
+            DispatchQueue.main.async {
+                let isActive = UIApplication.shared.applicationState == .active
+                if isActive {
+                    self.socketQueue.async {
+                        do {
+                            try self.start(port)
+                        } catch {
+                            print("Server start error: \(error)")
+                        }
+                    }
                 }
             }
+         
         }
     }
 

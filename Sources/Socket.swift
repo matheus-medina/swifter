@@ -47,8 +47,9 @@ open class Socket: Hashable, Equatable {
     }
     
     public func port() throws -> in_port_t {
-        var addr = sockaddr_in()
-        return try withUnsafePointer(to: &addr) { pointer in
+        let addr = sockaddr_in()
+        var addrMutable = addr
+        return try withUnsafePointer(to: &addrMutable) { pointer in
             var len = socklen_t(MemoryLayout<sockaddr_in>.size)
             if getsockname(socketFileDescriptor, UnsafeMutablePointer(OpaquePointer(pointer)), &len) != 0 {
                 throw SocketError.getSockNameFailed(Errno.description())
@@ -62,8 +63,9 @@ open class Socket: Hashable, Equatable {
     }
     
     public func isIPv4() throws -> Bool {
-        var addr = sockaddr_in()
-        return try withUnsafePointer(to: &addr) { pointer in
+        let addr = sockaddr_in()
+        var addrMutable = addr
+        return try withUnsafePointer(to: &addrMutable) { pointer in
             var len = socklen_t(MemoryLayout<sockaddr_in>.size)
             if getsockname(socketFileDescriptor, UnsafeMutablePointer(OpaquePointer(pointer)), &len) != 0 {
                 throw SocketError.getSockNameFailed(Errno.description())
